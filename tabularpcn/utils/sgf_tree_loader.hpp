@@ -132,9 +132,9 @@ public:
         loadSgf(input);
     }
 
-    std::vector<SGFTreeNode*>& get_nodes() { return nodes_; }
-    SGFTreeNode* get_root() { return nodes_.empty() ? nullptr : nodes_.front(); }
-    size_t get_tree_size() { return nodes_.size(); }
+    std::vector<SGFTreeNode*>& getNodes() { return nodes_; }
+    SGFTreeNode* getRoot() { return nodes_.empty() ? nullptr : nodes_.front(); }
+    size_t getTreeSize() { return nodes_.size(); }
 
 private:
     void loadSgf(BaseInputStream& input_stream)
