@@ -34,11 +34,11 @@ public:
         {
             if (tag == "B") {
                 assert(values.size() == 1);
-                type_ = NodeType::AND;
+                type_ = NodeType::OR;
             }
             if (tag == "W") {
                 assert(values.size() == 1);
-                type_ = NodeType::OR;
+                type_ = NodeType::AND;
             }
             if (tag == "C") {
                 assert(values.size() == 1);
