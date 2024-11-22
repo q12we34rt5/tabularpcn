@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../tree/tree.hpp"
 #include "sgf_exceptions.hpp"
 #include "sgf_lexer.hpp"
 #include <cstdint>
@@ -8,53 +9,9 @@
 #include <unordered_set>
 #include <vector>
 
-class BaseSGFNode {
+class BaseSGFNode : public TreeNode {
 public:
-    BaseSGFNode() : parent_(nullptr), child_(nullptr), next_sibling_(nullptr), num_children_(0) {}
-    virtual ~BaseSGFNode() = default;
-
-    virtual void addChild(BaseSGFNode* node)
-    {
-        node->detach();
-        if (child_ == nullptr) {
-            child_ = node;
-        } else {
-            BaseSGFNode* current = child_;
-            while (current->next_sibling_ != nullptr) {
-                current = current->next_sibling_;
-            }
-            current->next_sibling_ = node;
-        }
-        node->parent_ = this;
-        ++num_children_;
-    }
-
-    virtual BaseSGFNode* detach()
-    {
-        if (parent_ != nullptr) {
-            if (parent_->child_ == this) {
-                parent_->child_ = next_sibling_;
-            } else {
-                BaseSGFNode* ptr = parent_->child_;
-                while (ptr->next_sibling_ != this) {
-                    ptr = ptr->next_sibling_;
-                }
-                ptr->next_sibling_ = next_sibling_;
-            }
-            --parent_->num_children_;
-            parent_ = nullptr;
-            next_sibling_ = nullptr;
-        }
-        return this;
-    }
-
     virtual void addProperty(const std::string& tag, const std::vector<std::string>& values) = 0;
-
-public:
-    BaseSGFNode* parent_;
-    BaseSGFNode* child_;
-    BaseSGFNode* next_sibling_;
-    int num_children_;
 };
 
 class StringSGFNode : public BaseSGFNode {
@@ -138,7 +95,7 @@ class SGFParser {
     public:
         DummyNode() : BaseSGFNode() {}
 
-        void addChild(BaseSGFNode* node) override
+        void addChild(BaseTreeNode* node) override
         {
             if (child_ != nullptr) {
                 throw std::runtime_error("DummyNode can only have one child");
@@ -326,7 +283,7 @@ public:
         }
 
         // remove the dummy root
-        BaseSGFNode* root_child = dummy_root_->child_;
+        BaseSGFNode* root_child = static_cast<BaseSGFNode*>(dummy_root_->child_);
         if (root_child != nullptr) {
             root_child->detach();
         }
